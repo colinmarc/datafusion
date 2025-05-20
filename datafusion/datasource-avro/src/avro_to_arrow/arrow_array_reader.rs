@@ -933,7 +933,7 @@ fn resolve_string(v: &Value) -> ArrowResult<Option<String>> {
             .map(Some),
         Value::Enum(_, s) => Ok(Some(s.clone())),
         Value::Null => Ok(None),
-        other => Err(AvroError::GetString(other.into())),
+        other => Err(AvroError::GetString(other.clone())),
     }
     .map_err(|e| SchemaError(format!("expected resolvable string : {e:?}")))
 }
@@ -942,7 +942,7 @@ fn resolve_u8(v: &Value) -> AvroResult<u8> {
     let int = match v {
         Value::Int(n) => Ok(Value::Int(*n)),
         Value::Long(n) => Ok(Value::Int(*n as i32)),
-        other => Err(AvroError::GetU8(other.into())),
+        other => Err(AvroError::GetU8(other.clone())),
     }?;
     if let Value::Int(n) = int {
         if n >= 0 && n <= From::from(u8::MAX) {
@@ -950,7 +950,7 @@ fn resolve_u8(v: &Value) -> AvroResult<u8> {
         }
     }
 
-    Err(AvroError::GetU8(int.into()))
+    Err(AvroError::GetU8(int.clone()))
 }
 
 fn resolve_bytes(v: &Value) -> Option<Vec<u8>> {
@@ -965,7 +965,7 @@ fn resolve_bytes(v: &Value) -> Option<Vec<u8>> {
                 .collect::<Result<Vec<_>, _>>()
                 .ok()?,
         )),
-        other => Err(AvroError::GetBytes(other.into())),
+        other => Err(AvroError::GetBytes(other.clone())),
     }
     .ok()
     .and_then(|v| match v {
